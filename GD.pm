@@ -12,7 +12,7 @@ use Symbol 'gensym','qualify_to_ref';
 use Carp 'croak','carp';
 use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD);
-$VERSION = "1.33";
+$VERSION = "1.31";
 
 @ISA = qw(Exporter DynaLoader);
 # Items to export into callers namespace by default. Note: do not export
@@ -44,16 +44,16 @@ $VERSION = "1.33";
 	GD_CMP_INTERLACE
 );
 
-%EXPORT_TAGS = ('cmp'  => [qw(GD_CMP_IMAGE 
-			      GD_CMP_NUM_COLORS
-			      GD_CMP_COLOR
-			      GD_CMP_SIZE_X
-			      GD_CMP_SIZE_Y
-			      GD_CMP_TRANSPARENT
-			      GD_CMP_BACKGROUND
-			      GD_CMP_INTERLACE
-			     )
-			  ]
+%EXPORT_TAGS = (cmp  => [qw(GD_CMP_IMAGE 
+			    GD_CMP_NUM_COLORS
+			    GD_CMP_COLOR
+			    GD_CMP_SIZE_X
+			    GD_CMP_SIZE_Y
+			    GD_CMP_TRANSPARENT
+			    GD_CMP_BACKGROUND
+			    GD_CMP_INTERLACE
+			    )
+			]
 	       );
 
 # documentation error
@@ -82,6 +82,8 @@ sub AUTOLOAD {
 }
 
 bootstrap GD;
+
+*GD::Image::stringTTF = \&GD::Image::stringFT;
 
 # Preloaded methods go here.
 sub GD::gdSmallFont {
@@ -1183,9 +1185,9 @@ specified font and color.  They're carry-overs from the C interface,
 where there is a distinction between characters and strings.  Perl is
 insensible to such subtle distinctions.
 
-=item B<@bounds = $image-E<gt>stringTTF($fgcolor,$fontname,$ptsize,$angle,$x,$y,$string)>
+=item B<@bounds = $image-E<gt>stringFT($fgcolor,$fontname,$ptsize,$angle,$x,$y,$string)>
 
-=item B<@bounds = GD::Image-E<gt>stringTTF($fgcolor,$fontname,$ptsize,$angle,$x,$y,$string)>
+=item B<@bounds = GD::Image-E<gt>stringFT($fgcolor,$fontname,$ptsize,$angle,$x,$y,$string)>
 
 This method uses TrueType to draw a scaled, antialiased string using
 the TrueType vector font of your choice.  It requires that libgd to
@@ -1195,7 +1197,7 @@ TrueType font to be installed on your system.
 The arguments are as follows:
 
   fgcolor    Color index to draw the string in
-  fontname   An absolute or relative path to the TrueType (.ttf) font file
+  fontname   An absolute path to the TrueType (.ttf) font file
   ptsize     The desired point size (may be fractional)
   angle      The rotation angle, in radians
   x,y        X and Y coordinates to start drawing the string
@@ -1217,6 +1219,10 @@ You may also call this method from the GD::Image class name, in which
 case it doesn't do any actual drawing, but returns the bounding box
 using an inexpensive operation.  You can use this to perform layout
 operations prior to drawing.
+
+For backward compatibility with older versions of the FreeType
+library, the alias stringTTF() is also recognized.  Also be aware that
+(for some reason) relative font paths are not recognized.
 
 =back
 

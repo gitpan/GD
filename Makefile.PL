@@ -21,9 +21,9 @@ warn "\nIf you experience compile problems, please check the \@INC, \@LIBPATH an
 
 #### no user-serviceable parts below #####
 
-push @LIBS,'-lttf' if $TTF;
-push @LIBS,'-ljpeg' if $JPEG;
-push @LIBS, '-lm' unless $^O eq 'MSWin32';
+push @LIBS,'-lfreetype' if $TTF;
+push @LIBS,'-ljpeg'     if $JPEG;
+push @LIBS, '-lm'       unless $^O eq 'MSWin32';
 
 # FreeBSD 3.3 with libgd built from ports croaks if -lXpm is specified 
 if ($^O ne 'freebsd' && $^O ne 'MSWin32') { 
@@ -42,8 +42,8 @@ WriteMakefile(
     'VERSION_FROM'	=> 'GD.pm',
     'dist'      => {'COMPRESS'=>'gzip -9f', 'SUFFIX' => 'gz',
 	            'ZIP'=>'/usr/bin/zip','ZIPFLAGS'=>'-rl'},
-    'LIBS'      => [join(' ',$ENV{'GD_LIBS'},@LIBPATH,@LIBS)],
-    'INC'       => join(' ',$ENV{'GD_INC'},@INC), 
+    'LIBS'      => [join(' ',@LIBPATH,@LIBS)],
+    'INC'       => join(' ',@INC), 
     'AUTHOR'    => 'Lincoln Stein (lstein@cshl.org)',
     'ABSTRACT'  => 'Interface to Gd Graphics Library',
     'CAPI'      => $CAPI,

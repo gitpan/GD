@@ -2,7 +2,8 @@
 
 use lib './blib/lib','./blib/arch','../blib/lib','../blib/arch';
 use FileHandle;
-use constant FONT=>'./Generic.ttf';
+use Cwd;
+use constant FONT=>"./Generic.ttf";
 
 my $loaded;
 BEGIN {$| = 1; $loaded = 0; print "1..10\n"; }
@@ -14,10 +15,10 @@ $loaded++;
 
 chdir 't' || die "Couldn't change to 't' directory: $!";
 
+my $font = cwd . '/' . FONT;
 $arg = shift;
 
 if (defined $arg && $arg eq '--write') {
-  warn "Writing regression files...";
   compare(&test1,2,'write');
   compare(&test2,3,'write');
   compare(&test3,4,'write');
@@ -36,7 +37,7 @@ compare(test4(),++$loaded);
 compare(test5(),++$loaded);
 compare(test6(),++$loaded);
 
-if (GD::Image->stringTTF(0,FONT,12.0,0.0,20,20,"Hello world!")) {
+if (GD::Image->stringFT(0,$font,12.0,0.0,20,20,"Hello world!")) {
   compare(test7(),++$loaded);
 } elsif ($@ =~/not built with TrueType font support/) {
   warn "\n$@";
@@ -242,9 +243,9 @@ sub test7 {
     );
 
   # Some TTFs
-  $im->stringTTF($black,FONT,12.0,0.0,20,20,"Hello world!") || return;
-  $im->stringTTF($red,FONT,14.0,0.0,20,80,"Hello world!") || return;
-  $im->stringTTF($blue,FONT,30.0,-0.5,60,100,"Goodbye cruel world!") || die $@;
+  $im->stringFT($black,$font,12.0,0.0,20,20,"Hello world!") or (warn($@) && return 0);
+  $im->stringFT($red,$font,14.0,0.0,20,80,"Hello world!") or (warn($@) && return 0);
+  $im->stringFT($blue,$font,30.0,-0.5,60,100,"Goodbye cruel world!") or (warn($@) && return 0);
   $im->png;
 }
 

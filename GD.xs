@@ -426,18 +426,11 @@ gdnewFromJpegData(packname="GD::Image", imageData)
 	  gdIOCtx* ctx;
           char*    data;
           STRLEN   len;
-	  SV* errormsg;
 	CODE:
-#ifdef HAVE_JPEG
 	data = SvPV(imageData,len);
         ctx = newDynamicCtx(data,len);
 	RETVAL = (GD__Image) gdImageCreateFromJpegCtx(ctx);
         ctx->free(ctx);
-#else
-        errormsg = perl_get_sv("@",0);
-        sv_setpv(errormsg,"libgd was not built with jpeg support\n");
-        XSRETURN_EMPTY;
-#endif
 	OUTPUT:
 	RETVAL
 
@@ -502,7 +495,7 @@ gd_newFromJpeg(packname="GD::Image", filehandle)
         if (img == NULL) {
           errormsg = perl_get_sv("@",0);
 	  if (errormsg != NULL)
-	    sv_setpv(errormsg,"libgd was not built with jpeg support\n");
+	    sv_setpv(errormsg,"GD/libgd was not built with jpeg support\n");
 	  XSRETURN_EMPTY;
         }
         RETVAL = img;
@@ -543,6 +536,7 @@ gdnewFromXpm(packname="GD::Image", filename)
 	  gdImagePtr img;
 	  SV* errormsg;
 	CODE:
+#ifdef HAVE_XPM
 	img = gdImageCreateFromXpm(filename);
         if (img == NULL) {
 	    errormsg = perl_get_sv("@",0);
@@ -551,6 +545,11 @@ gdnewFromXpm(packname="GD::Image", filename)
 	    XSRETURN_EMPTY;
         }
         RETVAL = img;
+#else
+        errormsg = perl_get_sv("@",0);
+        sv_setpv(errormsg,"GD/libgd was not built with XPM support\n");
+        XSRETURN_EMPTY;
+#endif
         OUTPUT:
         RETVAL
 
@@ -1253,7 +1252,7 @@ gdstringUp(image,font,x,y,s,color)
 	}
 
 void
-gdstringTTF(image,fgcolor,fontname,ptsize,angle,x,y,string)
+gdstringFT(image,fgcolor,fontname,ptsize,angle,x,y,string)
         SV *	        image
         int             fgcolor
 	char *          fontname
@@ -1278,7 +1277,7 @@ gdstringTTF(image,fgcolor,fontname,ptsize,angle,x,y,string)
 	    img = NULL;
 	  }
 
-	  err = gdImageStringTTF(img,brect,fgcolor,fontname,ptsize,angle,x,y,string);
+	  err = gdImageStringFT(img,brect,fgcolor,fontname,ptsize,angle,x,y,string);
 	  if (err) {
 	    errormsg = perl_get_sv("@",0);
 	    if (errormsg != NULL)
