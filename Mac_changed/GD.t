@@ -2,7 +2,7 @@
 
 use FileHandle;
 use GD;
-#chdir 't' || die "Couldn't change to 't' directory: $!";
+chdir 't' || die "Couldn't change to 't' directory: $!";
 
 $arg = shift;
 if (1 || defined($arg) && ($arg eq '--write')) {
@@ -27,24 +27,24 @@ sub compare {
     my $ok = $testNo;
     my $regressdata;
     if ($fht eq "bare"){
-        open (REGRESSFILE,"test.out.$testNo.gif") 
-	    || die "Can't open regression file 'test.out.$testNo.gif': $!\n";
+        open (REGRESSFILE,"./test.out.$testNo.gif") 
+	    || die "Can't open regression file './t/test.out.$testNo.gif': $!\n";
         binmode REGRESSFILE;
         $regressdata = <REGRESSFILE>;
         close REGRESSFILE;
 	print $imageData eq $regressdata ? "ok $ok" : "not ok $ok","\n";
     } else {
 	my $fh = FileHandle->new;
-        $fh->open("test.out.$testNo.gif") or
-	    die "Can't open regression file 'test.out.$testNo.gif': $!\n";
+        $fh->open("./test.out.$testNo.gif") or
+	    die "Can't open regression file './t/test.out.$testNo.gif': $!\n";
         my $regressgif = GD::Image->newFromGif($fh);
         $fh->close;
 	$ok = $testNo+6;
 	print $imageData eq $regressgif->gif ? "ok $ok" : "not ok $ok","\n";
     }
     if ($WRITEREGRESS) {
-	open (REGRESSFILE,">test.out.$testNo.gif") 
-	    || die "Can't open regression file 'test.out.$testNo.gif': $!\n";
+	open (REGRESSFILE,">./test.out.$testNo.gif") 
+	    || die "Can't open regression file './t/test.out.$testNo.gif': $!\n";
         binmode REGRESSFILE;
 	print REGRESSFILE $imageData;
 	close REGRESSFILE;
@@ -58,7 +58,7 @@ sub test1 {
     my($red) = $im->colorAllocate(255, 0, 0);      
     my($green) = $im->colorAllocate(0,255,0);
     my($yellow) = $im->colorAllocate(255,250,205);
-    open (TILE,"tile.gif") || die "Can't open tile file: $!";
+    open (TILE,"./tile.gif") || die "Can't open tile file: $!";
     my($tile) = newFromGif GD::Image(TILE);
     close TILE;
     $im->setBrush($tile);
